@@ -172,6 +172,15 @@ class DMHandler(commands.Cog):
             thread = guild.get_thread(thread_id)
             if thread:
                 try:
+                    # Add [Closed] to the front of the thread name (if not already there)
+                    if not thread.name.startswith("[Closed]"):
+                        try:
+                            await thread.edit(name=f"[Closed] {thread.name}")
+                        except discord.Forbidden:
+                            print(f"[DMHandler] Missing permissions to rename thread {thread_id}")
+                        except Exception:
+                            traceback.print_exc()
+
                     await thread.send("This ticket has been closed by the user.")
                     await thread.edit(archived=True)
                 except discord.Forbidden:
